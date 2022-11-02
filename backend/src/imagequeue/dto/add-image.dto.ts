@@ -1,9 +1,12 @@
-import { IsNotEmpty, IsUrl } from 'class-validator';
+import { IsNotEmpty, IsUrl, Length } from 'class-validator';
+import { ObjectId } from 'mongoose';
 
 export class AddImageDTO {
   @IsNotEmpty()
-  author: string;
+  author: ObjectId;
   @IsNotEmpty()
   @IsUrl()
   url: string;
+  @Length(0, 200)
+  content: string;
 }

@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 export const DisplaySchema = new mongoose.Schema(
   {
     author: {
-      type: String,
+      type: mongoose.Types.ObjectId,
       required: true,
     },
     url: {
@@ -16,6 +16,9 @@ export const DisplaySchema = new mongoose.Schema(
     duration: {
       type: Number,
       default: 1,
+    },
+    bumped_users: {
+      type: [mongoose.Types.ObjectId],
     },
   },
   { timestamps: true },

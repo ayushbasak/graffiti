@@ -1,7 +1,7 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from './user.interface';
-import { Model } from 'mongoose';
+import { Model, ObjectId } from 'mongoose';
 import { CreateUserDTO } from './dto';
 
 @Injectable()
@@ -19,18 +19,24 @@ export class UsersService {
     }
   }
 
-  async getUser(username: string): Promise<User> {
+  // get user from string username or user id (Object Id)
+  async getUser(username: string | ObjectId): Promise<User> {
     try {
-      const user = await this.user.findOne({ username: username });
-      return user;
+      if (typeof username === 'string') {
+        const user = await this.user.findOne({ username: username });
+        return user;
+      } else {
+        const user = await this.user.findById(username);
+        return user;
+      }
     } catch (err) {
       return err;
     }
   }
 
-  async getUserHash(username: string): Promise<string> {
+  async getUserHash(username: string | ObjectId): Promise<string> {
     try {
-      const user = await this.user.findOne({ username: username });
+      const user = await this.getUser(username);
       if (!user) throw new ForbiddenException('User not found');
       return user.hash;
     } catch (err) {

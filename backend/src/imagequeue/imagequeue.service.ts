@@ -10,6 +10,7 @@ export class ImageQueueService {
 
   async add_to_queue(dto: AddImageDTO) {
     const image = new this.iq(dto);
+    // console.log(image);
     try {
       await image.save();
     } catch (err) {

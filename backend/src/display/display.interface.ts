@@ -1,7 +1,9 @@
-import mongoose from 'mongoose';
+import { ObjectId } from 'mongoose';
 
 export interface Display {
-  imageId: mongoose.Types.ObjectId;
-  inserted_at: Date;
-  expiration: Date;
+  author: ObjectId;
+  bumped_users: ObjectId[];
+  url: string;
+  bumps: number;
+  duration: number;
 }

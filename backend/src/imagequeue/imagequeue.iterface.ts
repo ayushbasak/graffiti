@@ -1,5 +1,7 @@
+import { ObjectId } from 'mongoose';
+
 export interface ImageQueue {
-  author: string;
+  author: ObjectId;
   url: string;
-  bumps: number;
+  content: string;
 }

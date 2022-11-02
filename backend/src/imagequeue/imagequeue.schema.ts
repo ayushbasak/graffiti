@@ -3,16 +3,16 @@ import mongoose from 'mongoose';
 export const ImageQueueSchema = new mongoose.Schema(
   {
     author: {
-      type: String,
+      type: mongoose.Types.ObjectId,
       required: true,
     },
     url: {
       type: String,
       required: true,
     },
-    bumps: {
-      type: Number,
-      default: 0,
+    content: {
+      type: String,
+      default: '',
     },
     duration: {
       type: Number,

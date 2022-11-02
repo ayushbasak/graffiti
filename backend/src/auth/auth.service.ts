@@ -42,14 +42,18 @@ export class AuthService {
   }
 
   async generate_token(username: string): Promise<{ access_token: string }> {
-    const token = await this.jwt.signAsync(
-      { username },
-      {
-        expiresIn: '15m',
-        secret: this.config.get('JWT_SECRET'),
-      },
-    );
-
-    return { access_token: token };
+    try {
+      const user = await this.userService.getUser(username);
+      const token = await this.jwt.signAsync(
+        { username, id: user._id },
+        {
+          expiresIn: '15m',
+          secret: this.config.get('JWT_SECRET'),
+        },
+      );
+      return { access_token: token };
+    } catch (err) {
+      throw err;
+    }
   }
 }
