@@ -12,7 +12,6 @@ export class ImageQueueService {
     const image = new this.iq(dto);
     try {
       await image.save();
-      console.log('saved image', image);
     } catch (err) {
       throw err;
     }
