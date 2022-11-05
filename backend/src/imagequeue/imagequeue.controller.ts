@@ -1,7 +1,6 @@
 import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
-import { ObjectId } from 'mongoose';
 import { GetUser } from 'src/auth/decorator';
-import { JwtGaurd } from 'src/auth/gaurd';
+import { AccessTokenGuard } from 'src/auth/gaurd';
 import { User } from 'src/users/user.interface';
 import { AddImageDTO } from './dto';
 import { ImageQueueService } from './imagequeue.service';
@@ -10,23 +9,30 @@ import { ImageQueueService } from './imagequeue.service';
 export class ImageQueueController {
   constructor(private iqService: ImageQueueService) {}
 
-  @UseGuards(JwtGaurd)
+  @UseGuards(AccessTokenGuard)
   @Get()
-  defineQueue(@GetUser() user: User) {
-    return user;
+  async test_route(@GetUser() user: User) {
+    try {
+      user.hash = undefined;
+      return user;
+    } catch (err) {
+      throw err;
+    }
   }
 
-  @UseGuards(JwtGaurd)
+  @UseGuards(AccessTokenGuard)
   @Post()
   async add_to_image(
     @GetUser('id') userId: any,
     @Body('url') url: string,
     @Body('content') content: string,
+    @Body('duration') duration: number,
   ) {
     const dto: AddImageDTO = new AddImageDTO();
     dto.author = userId;
     dto.url = url;
     dto.content = content;
+    dto.duration = duration;
     const res = await this.iqService.add_to_queue(dto);
     return res;
   }

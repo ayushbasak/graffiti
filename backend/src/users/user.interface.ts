@@ -5,4 +5,5 @@ export interface User {
   username: string;
   hash: string;
   gc: number;
+  refresh_token: string;
 }

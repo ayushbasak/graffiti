@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsUrl, Length } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsUrl, Length, Max, Min } from 'class-validator';
 import { ObjectId } from 'mongoose';
 
 export class AddImageDTO {
@@ -9,4 +9,8 @@ export class AddImageDTO {
   url: string;
   @Length(0, 200)
   content: string;
+  @IsNumber()
+  @Min(1)
+  @Max(1440)
+  duration: number;
 }

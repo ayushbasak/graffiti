@@ -1,7 +1,7 @@
 import { Controller, Get, Post, UseGuards } from '@nestjs/common';
 import { ObjectId } from 'mongoose';
 import { GetUser } from 'src/auth/decorator';
-import { JwtGaurd } from 'src/auth/gaurd';
+import { AccessTokenGuard } from 'src/auth/gaurd';
 import { DisplayService } from './display.service';
 
 @Controller('display')
@@ -16,7 +16,7 @@ export class DisplayController {
     }
   }
 
-  @UseGuards(JwtGaurd)
+  @UseGuards(AccessTokenGuard)
   @Post('bump')
   async bump(@GetUser('id') userId: ObjectId) {
     return await this.displayService.bump_image(userId);

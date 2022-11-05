@@ -9,6 +9,9 @@ export const DisplaySchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    content: {
+      type: String,
+    },
     bumps: {
       type: Number,
       default: 0,

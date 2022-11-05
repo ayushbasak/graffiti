@@ -1,13 +1,16 @@
-import { Injectable, UseGuards } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { contains } from 'class-validator';
 import { Model, ObjectId } from 'mongoose';
-import { GetUser } from 'src/auth/decorator';
+import { User } from 'src/users/user.interface';
+import { UsersService } from 'src/users/users.service';
 import { Display } from './display.interface';
 
 @Injectable()
 export class DisplayService {
-  constructor(@InjectModel('display') private display: Model<Display>) {}
+  constructor(
+    @InjectModel('display') private display: Model<Display>,
+    @InjectModel('users') private user: Model<User>,
+  ) {}
 
   async fetch_latest_image(): Promise<Display> {
     try {
@@ -21,6 +24,7 @@ export class DisplayService {
   async bump_image(userId: ObjectId) {
     try {
       const image = await this.display.findOne();
+      const author = await this.user.findById(image.author);
       const bumped_users = image.bumped_users;
       const new_bumped_users: ObjectId[] = [];
       let found = false;
@@ -34,11 +38,12 @@ export class DisplayService {
       if (!found) {
         new_bumped_users.push(userId);
       }
-      console.log(new_bumped_users);
       image.bumped_users = new_bumped_users;
       image.bumps = new_bumped_users.length;
-      console.log(image);
-      image.save();
+      const change_in_gc = new_bumped_users.length - bumped_users.length;
+      author.gc += change_in_gc;
+      await author.save();
+      await image.save();
     } catch (err) {
       throw err;
     }

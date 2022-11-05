@@ -9,4 +9,6 @@ export class CreateUserDTO {
 
   @IsNotEmpty()
   hash: string;
+
+  refresh_token: string;
 }
