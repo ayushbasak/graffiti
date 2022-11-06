@@ -9,7 +9,7 @@ export const UserSchema = new mongoose.Schema(
     },
     gc: {
       type: Number,
-      default: 0,
+      default: 100,
     },
     hash: {
       type: String,

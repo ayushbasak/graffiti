@@ -58,4 +58,18 @@ export class UsersService {
       throw err;
     }
   }
+
+  async postAndUpdateGC(userId: ObjectId) {
+    try {
+      const user = await this.user.findById(userId);
+      if (user.gc < 10) return false;
+      else {
+        user.gc -= 10;
+        await user.save();
+        return true;
+      }
+    } catch (err) {
+      throw err;
+    }
+  }
 }

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, ObjectId } from 'mongoose';
 import { User } from 'src/users/user.interface';
@@ -24,6 +24,15 @@ export class DisplayService {
   async bump_image(userId: ObjectId) {
     try {
       const image = await this.display.findOne();
+
+      if (!image) {
+        throw new ForbiddenException('No image in display');
+      }
+
+      if (image.author.toString() === userId.toString()) {
+        throw new ForbiddenException('Cannot upvote your own post');
+      }
+
       const author = await this.user.findById(image.author);
       const bumped_users = image.bumped_users;
       const new_bumped_users: ObjectId[] = [];
@@ -41,7 +50,7 @@ export class DisplayService {
       image.bumped_users = new_bumped_users;
       image.bumps = new_bumped_users.length;
       const change_in_gc = new_bumped_users.length - bumped_users.length;
-      author.gc += change_in_gc;
+      author.gc += change_in_gc * 10;
       await author.save();
       await image.save();
     } catch (err) {

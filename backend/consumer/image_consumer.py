@@ -3,6 +3,8 @@ import datetime
 import time
 import json
 
+SLEEP_DURATION = 10 # seconds
+
 def get_database():
     CONNECTION_STRING = "mongodb://localhost:27017"
     client = MongoClient(CONNECTION_STRING)
@@ -37,7 +39,6 @@ def perform():
     db = get_database()
     queue_collection = db['imagequeues']
     display_collection = db['displays']
-
     if (isDisplayEmpty()):
         print('Display is empty: adding image')
         pull_and_display(queue_collection, display_collection)
@@ -54,8 +55,8 @@ def perform():
             pull_and_display(queue_collection, display_collection)
 if __name__ == "__main__":
     while True:
-        print('Sleeping for 15 seconds')
-        time.sleep(15)
+        print(f'Sleeping for {SLEEP_DURATION} seconds')
+        time.sleep(SLEEP_DURATION)
         print(datetime.datetime.now())
         perform()
         print('Done\n')
