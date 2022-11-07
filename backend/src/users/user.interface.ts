@@ -6,4 +6,5 @@ export interface User {
   hash: string;
   gc: number;
   refresh_token: string;
+  last_post: Date;
 }

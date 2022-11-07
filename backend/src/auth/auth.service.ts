@@ -39,6 +39,9 @@ export class AuthService {
   ): Promise<{ access_token: string; refresh_token: string }> {
     try {
       const user = await this.userService.getUser(dto.username);
+      if (!user) {
+        throw new ForbiddenException('No such user');
+      }
       const match = await bcrypt.compare(dto.password, user.hash);
       if (match) {
         const tokens = await this.generate_token(dto.username);

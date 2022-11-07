@@ -14,6 +14,7 @@ export class ImageQueueController {
   async test_route(@GetUser() user: User) {
     try {
       user.hash = undefined;
+      user.refresh_token = undefined;
       return user;
     } catch (err) {
       throw err;

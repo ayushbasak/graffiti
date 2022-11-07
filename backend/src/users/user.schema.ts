@@ -19,6 +19,10 @@ export const UserSchema = new mongoose.Schema(
       type: String,
       default: null,
     },
+    last_post: {
+      type: Date,
+      default: new Date('1970-01-01'),
+    },
   },
   { timestamps: true },
 );

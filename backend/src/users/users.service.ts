@@ -72,4 +72,20 @@ export class UsersService {
       throw err;
     }
   }
+
+  async rate_limit(userId: ObjectId) {
+    try {
+      const user = await this.user.findById(userId);
+      const delay = 5 * 60 * 1000; // 5 minutes in milliseconds
+      const time_diff = user.last_post.getTime() + delay - Date.now();
+      if (time_diff > 0) return time_diff;
+      else {
+        user.last_post = new Date();
+        await user.save();
+        return 0;
+      }
+    } catch (err) {
+      throw err;
+    }
+  }
 }
