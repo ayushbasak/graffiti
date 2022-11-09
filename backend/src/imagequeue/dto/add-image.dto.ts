@@ -1,16 +1,21 @@
-import { IsNotEmpty, IsNumber, IsUrl, Length, Max, Min } from 'class-validator';
+import { Transform } from 'class-transformer';
+import { IsNotEmpty, IsUrl, Length, Matches, Max, Min } from 'class-validator';
 import { ObjectId } from 'mongoose';
 
 export class AddImageDTO {
-  @IsNotEmpty()
   author: ObjectId;
+
   @IsNotEmpty()
   @IsUrl()
+  @Matches('.+\\.(png|jpg|jpeg|gif|webp)$')
   url: string;
+
   @Length(0, 200)
   content: string;
-  @IsNumber()
+
+  @IsNotEmpty()
+  @Transform(({ value }) => parseInt(value))
   @Min(1)
   @Max(1440)
-  duration: number;
+  duration?: number;
 }

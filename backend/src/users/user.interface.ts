@@ -7,4 +7,6 @@ export interface User {
   gc: number;
   refresh_token: string;
   last_post: Date;
+  invite: string;
+  access_level: number;
 }

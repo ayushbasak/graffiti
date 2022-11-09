@@ -11,4 +11,6 @@ export class CreateUserDTO {
   hash: string;
 
   refresh_token: string;
+
+  invite: string;
 }

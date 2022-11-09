@@ -21,29 +21,33 @@ export class UsersService {
   }
 
   // get user from string username or user id (Object Id)
-  async getUser(username: string | ObjectId): Promise<User> {
+  async getUser(username: string): Promise<User> {
     try {
-      if (typeof username === 'string') {
-        const user = await this.user.findOne({ username: username });
-        return user;
-      } else {
-        const user = await this.user.findById(username);
-        return user;
-      }
+      const user = await this.user.findOne({ username: username });
+      return user;
     } catch (err) {
       return err;
     }
   }
 
-  async getUserHash(username: string | ObjectId): Promise<string> {
+  async getUserById(id: ObjectId): Promise<User> {
     try {
-      const user = await this.getUser(username);
-      if (!user) throw new ForbiddenException('User not found');
-      return user.hash;
+      const user = await this.user.findById(id);
+      return user;
     } catch (err) {
-      throw err;
+      return err;
     }
   }
+
+  // async getUserHash(username: string | ObjectId): Promise<string> {
+  //   try {
+  //     const user = await this.getUser(username);
+  //     if (!user) throw new ForbiddenException('User not found');
+  //     return user.hash;
+  //   } catch (err) {
+  //     throw err;
+  //   }
+  // }
 
   async updateRefreshToken(dto: UpdateUserDTO) {
     try {

@@ -5,9 +5,15 @@ import { UsersModule } from 'src/users/users.module';
 import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { AccessTokenStrategy, RefreshTokenStrategy } from './strategy';
+import { InvitationModule } from 'src/invitation/invitation.module';
 
 @Module({
-  imports: [UsersModule, ConfigModule.forRoot({}), JwtModule.register({})],
+  imports: [
+    UsersModule,
+    ConfigModule.forRoot({}),
+    JwtModule.register({}),
+    InvitationModule,
+  ],
   providers: [AuthService, AccessTokenStrategy, RefreshTokenStrategy],
   controllers: [AuthController],
 })

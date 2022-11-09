@@ -7,6 +7,8 @@ import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { ObjectId } from 'mongoose';
 import { User } from 'src/users/user.interface';
+import { InvitationService } from 'src/invitation/invitation.service';
+import { AuthCreateUserDTO } from './dto';
 
 @Injectable()
 export class AuthService {
@@ -14,16 +16,26 @@ export class AuthService {
     private userService: UsersService,
     private jwt: JwtService,
     private config: ConfigService,
+    private invitationService: InvitationService,
   ) {}
   async signup(
-    dto: AuthUserDTO,
+    dto: AuthCreateUserDTO,
   ): Promise<{ access_token: string; refresh_token: string }> {
+    const invite = dto.invite;
+    const invite_valid = await this.invitationService.checkInvite(invite);
+    if (!invite_valid) {
+      throw new ForbiddenException('Invalid Invite');
+    }
+
+    const new_invite = await this.invitationService.getInvite();
+
     const hash = await bcrypt.hash(dto.password, 10);
 
     const userDTO: CreateUserDTO = new CreateUserDTO();
     userDTO.username = dto.username;
     userDTO.hash = hash;
     userDTO.refresh_token = null;
+    userDTO.invite = new_invite.code || undefined;
     try {
       const user = await this.userService.create(userDTO);
       const tokens = await this.generate_token(dto.username);
@@ -74,7 +86,7 @@ export class AuthService {
       const access_token = await this.jwt.signAsync(
         { username, id: user._id },
         {
-          expiresIn: '120m',
+          expiresIn: '5m',
           secret: this.config.get('JWT_SECRET'),
         },
       );
@@ -100,7 +112,8 @@ export class AuthService {
     refresh_token: string,
   ): Promise<{ access_token: string; refresh_token: string }> {
     try {
-      const user: User = await this.userService.getUser(userId);
+      const user: User = await this.userService.getUserById(userId);
+      console.log(user, ' no user found?');
       if (!user || !user.refresh_token) {
         throw new ForbiddenException('Credentials Invalid');
       }

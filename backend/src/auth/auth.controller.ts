@@ -2,6 +2,7 @@ import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
 import { ObjectId } from 'mongoose';
 import { AuthService } from './auth.service';
 import { GetRefreshToken, GetUser } from './decorator';
+import { AuthCreateUserDTO } from './dto';
 import { AuthUserDTO } from './dto/auth-user.dto';
 import { AccessTokenGuard, RefreshTokenGuard } from './gaurd';
 
@@ -9,9 +10,10 @@ import { AccessTokenGuard, RefreshTokenGuard } from './gaurd';
 export class AuthController {
   constructor(private authService: AuthService) {}
   @Post('signup')
-  async signup(@Body() dto: AuthUserDTO) {
+  async signup(@Body() dto: AuthCreateUserDTO) {
     try {
-      return await this.authService.signup(dto);
+      const res = await this.authService.signup(dto);
+      return res;
     } catch (err) {
       throw err;
     }
@@ -42,6 +44,10 @@ export class AuthController {
     @GetUser('id') userId: ObjectId,
     @GetRefreshToken() refresh_token: string,
   ) {
-    return await this.authService.refreshTokens(userId, refresh_token);
+    try {
+      return await this.authService.refreshTokens(userId, refresh_token);
+    } catch (err) {
+      throw err;
+    }
   }
 }

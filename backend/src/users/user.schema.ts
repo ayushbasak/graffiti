@@ -23,6 +23,14 @@ export const UserSchema = new mongoose.Schema(
       type: Date,
       default: new Date('1970-01-01'),
     },
+    invite: {
+      type: String,
+      default: null,
+    },
+    access_level: {
+      type: Number,
+      default: 0,
+    },
   },
   { timestamps: true },
 );

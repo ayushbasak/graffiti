@@ -23,18 +23,12 @@ export class ImageQueueController {
 
   @UseGuards(AccessTokenGuard)
   @Post()
-  async add_to_image(
-    @GetUser('id') userId: any,
-    @Body('url') url: string,
-    @Body('content') content: string,
-    @Body('duration') duration: number,
-  ) {
-    const dto: AddImageDTO = new AddImageDTO();
-    dto.author = userId;
-    dto.url = url;
-    dto.content = content;
-    dto.duration = duration;
-    const res = await this.iqService.add_to_queue(dto);
-    return res;
+  async add_to_image(@GetUser('id') userId: any, @Body() dto: AddImageDTO) {
+    try {
+      dto.author = userId;
+      await this.iqService.add_to_queue(dto);
+    } catch (err) {
+      throw err;
+    }
   }
 }
