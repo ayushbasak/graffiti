@@ -59,6 +59,8 @@ export class AuthService {
         const tokens = await this.generate_token(dto.username);
         await this.updateRefreshToken(user._id, tokens.refresh_token);
         return tokens;
+      } else {
+        throw new ForbiddenException('Credential Invalid');
       }
     } catch (err) {
       throw err;

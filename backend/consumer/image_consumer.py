@@ -3,7 +3,7 @@ import datetime
 import time
 import json
 
-SLEEP_DURATION = 10 # seconds
+SLEEP_DURATION = 30 # seconds
 
 def get_database():
     CONNECTION_STRING = "mongodb://localhost:27017"
