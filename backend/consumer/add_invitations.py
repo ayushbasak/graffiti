@@ -4,6 +4,7 @@ import time
 import json
 import random
 import string
+import sys
 
 # SLEEP_DURATION = 1 # seconds
 SIZE = 6
@@ -34,9 +35,14 @@ def perform():
     print('Added invitation')
 
 if __name__ == "__main__":
-    while True:
+    COUNT = 0
+    if len(sys.argv) > 1:
+        COUNT = int(sys.argv[1])
+    while COUNT > 0:
         # print(f'Sleeping for {SLEEP_DURATION} seconds')
         # time.sleep(SLEEP_DURATION)
         print(datetime.datetime.now())
         perform()
         print('Done\n')
+        COUNT -= 1
+        time.sleep(0.1)

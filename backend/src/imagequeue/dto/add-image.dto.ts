@@ -4,6 +4,7 @@ import { ObjectId } from 'mongoose';
 
 export class AddImageDTO {
   author: ObjectId;
+  author_name: string;
 
   @IsNotEmpty()
   @IsUrl()

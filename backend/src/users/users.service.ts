@@ -63,12 +63,12 @@ export class UsersService {
     }
   }
 
-  async postAndUpdateGC(userId: ObjectId) {
+  async postAndUpdateGC(userId: ObjectId, cost: number) {
     try {
       const user = await this.user.findById(userId);
-      if (user.gc < 10) return false;
+      if (user.gc < cost) return false;
       else {
-        user.gc -= 10;
+        user.gc -= cost;
         await user.save();
         return true;
       }
@@ -80,7 +80,8 @@ export class UsersService {
   async rate_limit(userId: ObjectId) {
     try {
       const user = await this.user.findById(userId);
-      const delay = 5 * 60 * 1000; // 5 minutes in milliseconds
+      // const delay = 5 * 60 * 1000; // 5 minutes in milliseconds
+      const delay = 10 * 1000; // 10 seconds in milliseconds
       const time_diff = user.last_post.getTime() + delay - Date.now();
       if (time_diff > 0) return time_diff;
       else {
@@ -88,6 +89,26 @@ export class UsersService {
         await user.save();
         return 0;
       }
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  async report_user(userId: ObjectId) {
+    try {
+      const user = await this.user.findById(userId);
+      user.gc -= 10;
+      await user.save();
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  async restrict_user(userId: ObjectId) {
+    try {
+      const user = await this.user.findById(userId);
+      user.access_level = -1;
+      await user.save();
     } catch (err) {
       throw err;
     }

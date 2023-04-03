@@ -26,17 +26,14 @@ export class AuthService {
     if (!invite_valid) {
       throw new ForbiddenException('Invalid Invite');
     }
-
-    const new_invite = await this.invitationService.getInvite();
-
     const hash = await bcrypt.hash(dto.password, 10);
-
     const userDTO: CreateUserDTO = new CreateUserDTO();
     userDTO.username = dto.username;
     userDTO.hash = hash;
     userDTO.refresh_token = null;
-    userDTO.invite = new_invite.code || undefined;
     try {
+      const new_invite = await this.invitationService.getInvite();
+      userDTO.invite = new_invite.code || undefined;
       const user = await this.userService.create(userDTO);
       const tokens = await this.generate_token(dto.username);
       await this.updateRefreshToken(user._id, tokens.refresh_token);
@@ -63,7 +60,7 @@ export class AuthService {
         throw new ForbiddenException('Credential Invalid');
       }
     } catch (err) {
-      throw err;
+      return err.response;
     }
   }
 
@@ -104,6 +101,16 @@ export class AuthService {
         },
       );
       return { access_token, refresh_token };
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  async getUserInfo(userId: ObjectId) {
+    try {
+      const info = await this.userService.getUserById(userId);
+      console.log('information', info);
+      return info;
     } catch (err) {
       throw err;
     }

@@ -6,6 +6,10 @@ export const ImageQueueSchema = new mongoose.Schema(
       type: mongoose.Types.ObjectId,
       required: true,
     },
+    author_name: {
+      type: String,
+      required: true,
+    },
     url: {
       type: String,
       required: true,

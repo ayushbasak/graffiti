@@ -26,6 +26,8 @@ export class InvitationService {
     try {
       const invite = await this.invite.findOne({ used: false });
       if (!invite) throw new Error('No invite found');
+      invite.used = true;
+      await invite.save();
       return invite;
     } catch (err) {
       return err;
@@ -36,9 +38,10 @@ export class InvitationService {
     try {
       const invite = await this.invite.findOne({ code });
       if (!invite) return false;
-      if (invite.used) return false;
-      invite.used = true;
-      await invite.save();
+      // if (invite.used) return false;
+      // invite.used = true;
+      // await invite.save();
+      await this.invite.findOneAndDelete({ code });
       return true;
     } catch (err) {
       return false;
