@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UserSchema } from 'src/users/user.schema';
+import { UsersModule } from 'src/users/users.module';
 import { DisplayController } from './display.controller';
 import { DisplaySchema } from './display.schema';
 import { DisplayService } from './display.service';
@@ -17,6 +18,7 @@ import { DisplayService } from './display.service';
         schema: UserSchema,
       },
     ]),
+    UsersModule,
   ],
   controllers: [DisplayController],
   providers: [DisplayService],

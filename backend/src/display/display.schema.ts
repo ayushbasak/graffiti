@@ -5,6 +5,10 @@ export const DisplaySchema = new mongoose.Schema(
       type: mongoose.Types.ObjectId,
       required: true,
     },
+    author_name: {
+      type: String,
+      required: true,
+    },
     url: {
       type: String,
       required: true,
@@ -21,6 +25,9 @@ export const DisplaySchema = new mongoose.Schema(
       default: 1,
     },
     bumped_users: {
+      type: [mongoose.Types.ObjectId],
+    },
+    reports: {
       type: [mongoose.Types.ObjectId],
     },
   },

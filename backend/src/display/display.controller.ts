@@ -21,4 +21,10 @@ export class DisplayController {
   async bump(@GetUser('id') userId: ObjectId) {
     return await this.displayService.bump_image(userId);
   }
+
+  @UseGuards(AccessTokenGuard)
+  @Post('report')
+  async report(@GetUser('id') userId: ObjectId) {
+    return await this.displayService.report_image(userId);
+  }
 }

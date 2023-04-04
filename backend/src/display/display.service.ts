@@ -10,6 +10,7 @@ export class DisplayService {
   constructor(
     @InjectModel('display') private display: Model<Display>,
     @InjectModel('users') private user: Model<User>,
+    private userService: UsersService,
   ) {}
 
   async fetch_latest_image(): Promise<Display> {
@@ -52,6 +53,29 @@ export class DisplayService {
       const change_in_gc = new_bumped_users.length - bumped_users.length;
       author.gc += change_in_gc * 10;
       await author.save();
+      await image.save();
+    } catch (err) {
+      throw err;
+    }
+  }
+  async report_image(userId: ObjectId) {
+    try {
+      const image = await this.display.findOne();
+      if (!image) {
+        throw new ForbiddenException('No image in display');
+      }
+      this.userService.report_user(image.author);
+      if (image.author.toString() === userId.toString()) {
+        throw new ForbiddenException('Cannot report your own post');
+      }
+      if (!image.reports.includes(userId)) {
+        image.reports.push(userId);
+      } else {
+        throw new ForbiddenException('Already reported');
+      }
+      if (image.reports.length >= 3) {
+        this.userService.restrict_user(image.author);
+      }
       await image.save();
     } catch (err) {
       throw err;

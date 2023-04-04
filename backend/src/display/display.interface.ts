@@ -6,4 +6,5 @@ export interface Display {
   url: string;
   bumps: number;
   duration: number;
+  reports: ObjectId[];
 }
