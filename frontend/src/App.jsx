@@ -14,7 +14,7 @@ import { useEffect } from 'react';
 import refresh_token from './middlewares/refresh';
 import getUserInfo from './middlewares/getUserInfo';
 import Footer from './components/Footer';
-import { Notifications } from '@mantine/notifications';
+import { Toaster } from 'sonner';
 function App() {
   const theme = themeStore(state => state.theme);
   const useTokens = userStore(state => state.useTokens);
@@ -27,52 +27,68 @@ function App() {
   const authenticated = userStore(state => state.authenticated);
 
   useEffect(() => {
-    const token = window.localStorage.getItem('refresh_token');
+    // Helper to get cookie by name
+    const getCookie = (name) => {
+      const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+      if (match) return match[2];
+      return null;
+    };
+
+    // Grab BOTH the refresh_token and username from the cookies!
+    const token = getCookie('refresh_token');
+    const cookieUserName = getCookie('username');
+
     if (token) {
-      refresh_token()
-      .then((tokens) => {
-        useTokens(tokens.access_token, tokens.refresh_token);
-        return tokens;
-      })
-      .then((tokens) => {
-        const userInfo = getUserInfo(tokens.access_token);
-        return userInfo;
-      })
-      .then((userInfo) => {
-        setName(userInfo.username);
-        setUserId(userInfo._id);
-        setUserGc(userInfo.gc);
-        setUserInvite(userInfo.invite);
-        setBanned(userInfo.access_level < 0);
+      if (cookieUserName) {
+        // Optimistic login to prevent flashing a "logged out" UI
+        setName(cookieUserName);
         toggleAuth(true);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+      }
+
+      refresh_token()
+        .then((tokens) => {
+          useTokens(tokens.access_token, tokens.refresh_token);
+          return tokens;
+        })
+        .then((tokens) => {
+          const userInfo = getUserInfo(tokens.access_token);
+          return userInfo;
+        })
+        .then((userInfo) => {
+          setName(userInfo.username);
+          setUserId(userInfo._id);
+          setUserGc(userInfo.gc);
+          setUserInvite(userInfo.invite);
+          setBanned(userInfo.access_level < 0);
+          toggleAuth(true); // Final confirmation
+        })
+        .catch((error) => {
+          // If the refresh token is expired/invalid, clear it from zustand
+          toggleAuth(false);
+          useTokens("", "");
+        });
     }
-  }, [])
+  }, []) // Empty dependency array means this runs ONLY ONCE when App loads
+
   return (
-    <MantineProvider withGlobalStyles withNormalizeCSS theme={{ colorScheme: theme }}>
-        <Notifications  position='top-left'/>
+    <>
+      <Toaster position="top-center" richColors />
+      <MantineProvider theme={{ colorScheme: theme }}>
+        <div className="flex flex-col min-h-screen">
           <Navbar />
-          <Flex
-            sx={{
-              height: '85%',
-              width: '100%',
-              justifyContent: 'center',
-              // alignItems: 'center',
-            }}
-          >
+          <main className="flex-1 w-full bg-slate-50 dark:bg-slate-900 border-x border-slate-200 dark:border-slate-800 xl:w-[1240px] xl:mx-auto">
             <Routes>
               <Route path='/' element={<Home />}></Route>
               <Route path='/login' element={<Login />}></Route>
               <Route path='/signup' element={<Signup />}></Route>
               <Route path='/upload' element={<UploadPost />}></Route>
-              <Route path='/profile' element={<Profile />}></Route>
+              <Route path='/profile/:username' element={<Profile />}></Route>
             </Routes>
-          </Flex>
+          </main>
           <Footer />
-    </MantineProvider>
+        </div>
+      </MantineProvider>
+    </>
   )
 }
 

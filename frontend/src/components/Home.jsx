@@ -6,24 +6,20 @@ function Home() {
     const authenticated = userStore(state => state.authenticated);
     const username = userStore(state => state.user.username);
     return (
-        <Box
-            bg={'green'}
-        >
-            <Flex
-                mih={50}
-                p={20}
-                radius='sm'
-                justify='space-between'
-                align='center'
-                direction={'column'}
-            >
-                {
-                    authenticated ?
-                    <Display /> :
-                    <Text>You need to be logged in to access this page</Text>
-                }
-            </Flex>
-        </Box>
+        <div className="flex flex-col items-center justify-center w-full min-h-[calc(100vh-140px)]">
+            {authenticated ? (
+                <Display />
+            ) : (
+                <div className="flex flex-col items-center gap-4 text-center px-4">
+                    <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-50">
+                        Welcome to Graffiti
+                    </h1>
+                    <p className="text-slate-500 dark:text-slate-400 max-w-[500px]">
+                        You need to be logged in to view and interact with the daily art board.
+                    </p>
+                </div>
+            )}
+        </div>
     );
 }
 
