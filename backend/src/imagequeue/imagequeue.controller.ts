@@ -5,13 +5,15 @@ import { User } from 'src/users/user.interface';
 import { UsersService } from 'src/users/users.service';
 import { AddImageDTO } from './dto';
 import { ImageQueueService } from './imagequeue.service';
+import { S3Service } from './s3.service';
 
 @Controller('iq')
 export class ImageQueueController {
   constructor(
     private iqService: ImageQueueService,
     private userService: UsersService,
-  ) {}
+    private s3Service: S3Service,
+  ) { }
 
   @UseGuards(AccessTokenGuard)
   @Get()
@@ -48,4 +50,15 @@ export class ImageQueueController {
       throw err;
     }
   }
+
+  // Add these to your controller
+  @UseGuards(AccessTokenGuard)
+  @Post('presigned-url')
+  async getPresignedUrl(
+    @Body('fileName') fileName: string,
+    @Body('contentType') contentType: string,
+  ) {
+    return await this.s3Service.getPresignedUrl(fileName, contentType);
+  }
+
 }

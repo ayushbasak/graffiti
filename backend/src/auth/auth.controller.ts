@@ -8,7 +8,7 @@ import { AccessTokenGuard, RefreshTokenGuard } from './gaurd';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService) { }
   @Post('signup')
   async signup(@Body() dto: AuthCreateUserDTO) {
     try {
@@ -33,6 +33,16 @@ export class AuthController {
   async logout(@GetUser('id') userId: ObjectId) {
     try {
       await this.authService.logout(userId);
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  @UseGuards(AccessTokenGuard)
+  @Get('userinfo')
+  async userinfo(@GetUser('id') userId: ObjectId) {
+    try {
+      return await this.authService.getUserInfo(userId);
     } catch (err) {
       throw err;
     }

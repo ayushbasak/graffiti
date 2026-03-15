@@ -1,16 +1,17 @@
 from pymongo import MongoClient
 import datetime
-import time
-import json
 import random
 import string
 import sys
+import os
 
 # SLEEP_DURATION = 1 # seconds
 SIZE = 6
 
 def get_database():
-    CONNECTION_STRING = "mongodb://localhost:27017"
+    CONNECTION_STRING = os.environ.get('MONGO_URI')
+    if not CONNECTION_STRING:
+        raise ValueError("MONGO_URI environment variable is not set")
     client = MongoClient(CONNECTION_STRING)
 
     return client['graffiti']
@@ -27,22 +28,20 @@ def pull_and_display(invitation_collection):
         'used': False
     })
 
-def perform():
+def perform(DEBUG):
     db = get_database()
     invitation_collection = db['invitations']
 
     pull_and_display(invitation_collection)
-    print('Added invitation')
+    if DEBUG: print('Added invitation')
 
 if __name__ == "__main__":
     COUNT = 0
-    if len(sys.argv) > 1:
+    if len(sys.argv) == 3:
         COUNT = int(sys.argv[1])
-    while COUNT > 0:
-        # print(f'Sleeping for {SLEEP_DURATION} seconds')
-        # time.sleep(SLEEP_DURATION)
-        print(datetime.datetime.now())
-        perform()
-        print('Done\n')
-        COUNT -= 1
-        time.sleep(0.1)
+        DEBUG = sys.argv[2].lower() == 'debug'
+    else: exit(1)
+    if DEBUG: print(datetime.datetime.now())
+    perform(DEBUG)
+    if DEBUG: print('Done\n')
+    COUNT -= 1

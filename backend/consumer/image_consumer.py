@@ -2,11 +2,14 @@ from pymongo import MongoClient
 import datetime
 import time
 import json
+import os
 
 SLEEP_DURATION = 30 # seconds
 
 def get_database():
-    CONNECTION_STRING = "mongodb://localhost:27017"
+    CONNECTION_STRING = os.environ.get('MONGO_URI')
+    if not CONNECTION_STRING:
+        raise ValueError("MONGO_URI environment variable is not set")
     client = MongoClient(CONNECTION_STRING)
 
     return client['graffiti']
@@ -19,13 +22,14 @@ def isDisplayEmpty():
 
 def pull_and_display(queue_collection, display_collection):
     pipeline = [
-        {'$sort': {'created_at': -1}},
+        {'$sort': {'createdAt': -1}},
         {'$limit': 1}
     ]
     response = queue_collection.aggregate(pipeline)
     result = []
     for item in response:
         result.append(item)
+    print(queue_collection.count_documents({}))
     if (len(result) > 0):
         result = result[0]
         result['createdAt'] = datetime.datetime.now()

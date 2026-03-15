@@ -17,7 +17,7 @@ export class AuthService {
     private jwt: JwtService,
     private config: ConfigService,
     private invitationService: InvitationService,
-  ) {}
+  ) { }
   async signup(
     dto: AuthCreateUserDTO,
   ): Promise<{ access_token: string; refresh_token: string }> {
@@ -109,7 +109,6 @@ export class AuthService {
   async getUserInfo(userId: ObjectId) {
     try {
       const info = await this.userService.getUserById(userId);
-      console.log('information', info);
       return info;
     } catch (err) {
       throw err;
@@ -122,7 +121,6 @@ export class AuthService {
   ): Promise<{ access_token: string; refresh_token: string }> {
     try {
       const user: User = await this.userService.getUserById(userId);
-      console.log(user, ' no user found?');
       if (!user || !user.refresh_token) {
         throw new ForbiddenException('Credentials Invalid');
       }
