@@ -11,6 +11,7 @@ import Signup from './components/Signup';
 import UploadPost from './components/UploadPost';
 import Profile from './components/Profile';
 import Shop from './components/Shop';
+import Gallery from './components/Gallery';
 import { useEffect } from 'react';
 import refresh_token from './middlewares/refresh';
 import getUserInfo from './middlewares/getUserInfo';
@@ -26,6 +27,14 @@ function App() {
   const setBanned = userStore(state => state.setBanned);
   const toggleAuth = userStore(state => state.toggleAuth);
   const authenticated = userStore(state => state.authenticated);
+
+  useEffect(() => {
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [theme]);
 
   useEffect(() => {
     // Helper to get cookie by name
@@ -85,6 +94,7 @@ function App() {
               <Route path='/upload' element={<UploadPost />}></Route>
               <Route path='/profile/:username' element={<Profile />}></Route>
               <Route path='/shop' element={<Shop />}></Route>
+              <Route path='/gallery' element={<Gallery />}></Route>
             </Routes>
           </main>
           <Footer />

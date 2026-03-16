@@ -4,13 +4,15 @@ import { Model } from 'mongoose';
 import { UsersService } from 'src/users/users.service';
 import { AddImageDTO } from './dto';
 import { ImageQueue } from './imagequeue.iterface';
+import { PostsService } from '../posts/posts.service';
 
 @Injectable()
 export class ImageQueueService {
   constructor(
     @InjectModel('imagequeue') private iq: Model<ImageQueue>,
     private userService: UsersService,
-  ) {}
+    private postsService: PostsService,
+  ) { }
 
   async add_to_queue(dto: AddImageDTO) {
     try {
@@ -30,6 +32,8 @@ export class ImageQueueService {
       if (updateGC) {
         const image = new this.iq(dto);
         await image.save();
+        // Permanently record in gallery
+        await this.postsService.create(dto);
       } else {
         throw new ForbiddenException('Not Enough Graf Coins');
       }

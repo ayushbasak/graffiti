@@ -55,11 +55,16 @@ function Navbar() {
                     <Link to="/" className="text-xl md:text-2xl font-black tracking-tighter uppercase">
                         Graffiti.
                     </Link>
-                    {authenticated && user && !user.banned && (
-                        <Link to="/upload" className="text-xs md:text-sm font-medium text-slate-500 hover:text-black dark:hover:text-white transition-colors">
-                            Upload Art
+                    <div className="flex items-center gap-4">
+                        {authenticated && user && !user.banned && (
+                            <Link to="/upload" className="text-xs md:text-sm font-medium text-slate-500 hover:text-black dark:hover:text-white transition-colors">
+                                Upload Art
+                            </Link>
+                        )}
+                        <Link to="/gallery" className="text-xs md:text-sm font-medium text-slate-500 hover:text-black dark:hover:text-white transition-colors">
+                            Gallery
                         </Link>
-                    )}
+                    </div>
                 </div>
 
                 {/* Right side actions */}
