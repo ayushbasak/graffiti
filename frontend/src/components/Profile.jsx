@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import axios from "axios";
 import { userStore } from "../store/store";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Loader2, User, Key, Coins, AlertCircle, Calendar } from "lucide-react";
 
 function Profile() {
@@ -22,6 +23,18 @@ function Profile() {
             try {
                 const response = await axios.get(`http://localhost:5000/users/${username}`);
                 setProfileData(response.data);
+
+                // If this is our own profile, force update the global state too!
+                if (currentUser.username === username && currentUser.access_token) {
+                    try {
+                        const info = await axios.get('http://localhost:5000/auth/userinfo', {
+                            headers: { 'Authorization': `Bearer ${currentUser.access_token}` }
+                        });
+                        userStore.getState().useUserInfo(info.data);
+                    } catch (e) {
+                        console.error("Silent ignore: Background balance refresh failed", e);
+                    }
+                }
             } catch (err) {
                 if (err.response?.status === 404) {
                     setError("User not found");
@@ -34,7 +47,7 @@ function Profile() {
         }
 
         if (username) fetchProfile();
-    }, [username]);
+    }, [username, currentUser.access_token]);
 
     if (isLoading) {
         return (
@@ -117,6 +130,16 @@ function Profile() {
                                     {currentUser.invite_code}
                                 </p>
                             </div>
+                        </div>
+                    )}
+                    {isOwnProfile && (
+                        <div className="pt-6">
+                            <Link to="/shop" className="w-full">
+                                <Button className="w-full bg-amber-500 hover:bg-amber-600 font-bold">
+                                    <Coins className="mr-2 h-4 w-4" />
+                                    Buy More GCs
+                                </Button>
+                            </Link>
                         </div>
                     )}
                 </CardContent>

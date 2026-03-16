@@ -6,6 +6,7 @@ import { ImageQueueModule } from './imagequeue/imagequeue.module';
 import { DisplayModule } from './display/display.module';
 import { InvitationModule } from './invitation/invitation.module';
 import { ConfigModule } from '@nestjs/config';
+import { PaymentsModule } from './payments/payments.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ envFilePath: `${process.env.NODE_ENV}.env` }),
@@ -15,6 +16,7 @@ import { ConfigModule } from '@nestjs/config';
     ImageQueueModule,
     DisplayModule,
     InvitationModule,
+    PaymentsModule,
   ],
 })
-export class AppModule {}
+export class AppModule { }

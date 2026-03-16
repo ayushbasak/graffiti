@@ -10,17 +10,27 @@ const userStore = create(devtools((set) => ({
         banned: false,
     },
     toggleAuth: (new_state) => set((state) => ({ authenticated: new_state })),
-    setName: (name) => set((state) => ({ user: { ...state.user, username: name }})),
-    setUserId: (user_id) => set((state) => ({ user: { ...state.user, user_id }})),
-    setUserGc: (user_gc) => set((state) => ({ user: { ...state.user, user_gc }})),
-    setUserInvite: (invite_code) => set((state) => ({ user: { ...state.user, invite_code }})),
+    setName: (name) => set((state) => ({ user: { ...state.user, username: name } })),
+    setUserId: (user_id) => set((state) => ({ user: { ...state.user, user_id } })),
+    setUserGc: (user_gc) => set((state) => ({ user: { ...state.user, user_gc } })),
+    setUserInvite: (invite_code) => set((state) => ({ user: { ...state.user, invite_code } })),
     useTokens: (access_token, refresh_token) => set((state) => ({ user: { ...state.user, access_token, refresh_token } })),
-    setBanned: (banned) => set((state) => ({ user: { ...state.user, banned }}))
+    setBanned: (banned) => set((state) => ({ user: { ...state.user, banned } })),
+    useUserInfo: (data) => set((state) => ({
+        user: {
+            ...state.user,
+            username: data.username,
+            user_id: data.id || data._id,
+            user_gc: data.gc,
+            invite_code: data.invite,
+            banned: (data.access_level || 0) < 0
+        }
+    }))
 })))
 
 const themeStore = create(devtools((set) => ({
     theme: 'light',
-    toggle: () => set((state) => ({ theme: state.theme === 'light' ? 'dark':'light' }))
+    toggle: () => set((state) => ({ theme: state.theme === 'light' ? 'dark' : 'light' }))
 })))
 
 export {

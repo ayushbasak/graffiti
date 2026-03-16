@@ -18,6 +18,8 @@ services:
       - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
       - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
       - AWS_S3_BUCKET_NAME=${AWS_S3_BUCKET_NAME}
+      - PAYU_KEY=${PAYU_KEY}
+      - PAYU_SALT=${PAYU_SALT}
     deploy:
       resources:
         limits:

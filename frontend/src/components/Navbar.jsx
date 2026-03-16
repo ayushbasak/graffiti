@@ -1,6 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { userStore, themeStore } from "../store/store";
-import { Button } from "@/components/ui/button"; // Shadcn Button
+import { Button } from "@/components/ui/button";
+import { LogOut, User, Menu, X, Coins } from "lucide-react";
 import axios from "axios";
 import { FaMoon, FaSun } from 'react-icons/fa';
 
@@ -78,6 +79,14 @@ function Navbar() {
                         </>
                     ) : (
                         <div className="flex items-center gap-2 md:gap-4">
+                            <div className="hidden sm:flex items-center gap-1.5 px-2 py-1 bg-slate-100 dark:bg-slate-800 rounded-md">
+                                <Coins className="h-3.5 w-3.5 text-amber-500" />
+                                <span className="text-xs font-bold">{user.user_gc}</span>
+                            </div>
+                            <Link to="/shop" className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-500 hover:bg-amber-600 text-white rounded-md text-xs md:text-sm font-bold transition-colors">
+                                <Coins className="h-4 w-4" />
+                                <span>Buy GCs</span>
+                            </Link>
                             <Link to={`/profile/${user.username}`}>
                                 <span className="text-xs md:text-sm font-semibold hidden sm:inline-block hover:underline">{user.username}</span>
                             </Link>

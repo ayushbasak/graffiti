@@ -6,7 +6,7 @@ import { CreateUserDTO, UpdateUserDTO } from './dto';
 
 @Injectable()
 export class UsersService {
-  constructor(@InjectModel('User') private user: Model<User>) {}
+  constructor(@InjectModel('User') private user: Model<User>) { }
 
   // create user in the database
   async create(dto: CreateUserDTO): Promise<User> {
@@ -109,6 +109,19 @@ export class UsersService {
       const user = await this.user.findById(userId);
       user.access_level = -1;
       await user.save();
+    } catch (err) {
+      throw err;
+    }
+  }
+  async addGC(userId: ObjectId, amount: number) {
+    try {
+      const user = await this.user.findById(userId);
+      if (user) {
+        user.gc += amount;
+        await user.save();
+        return true;
+      }
+      return false;
     } catch (err) {
       throw err;
     }

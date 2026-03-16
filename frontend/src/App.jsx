@@ -10,6 +10,7 @@ import Navbar from './components/Navbar';
 import Signup from './components/Signup';
 import UploadPost from './components/UploadPost';
 import Profile from './components/Profile';
+import Shop from './components/Shop';
 import { useEffect } from 'react';
 import refresh_token from './middlewares/refresh';
 import getUserInfo from './middlewares/getUserInfo';
@@ -83,6 +84,7 @@ function App() {
               <Route path='/signup' element={<Signup />}></Route>
               <Route path='/upload' element={<UploadPost />}></Route>
               <Route path='/profile/:username' element={<Profile />}></Route>
+              <Route path='/shop' element={<Shop />}></Route>
             </Routes>
           </main>
           <Footer />
