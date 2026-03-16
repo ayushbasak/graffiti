@@ -4,15 +4,15 @@ FROM node:22-slim AS builder
 WORKDIR /usr/src/app
 
 # Only copy package files to maximize Docker caching
-COPY package.json yarn.lock ./
+COPY package.json package-lock.json ./
 
-RUN yarn install --frozen-lockfile
+RUN npm install
 
 # Copy the rest of the frontend source
 COPY . .
 
 # Build the Vite application for production
-RUN yarn build
+RUN npm run build
 
 
 # --------- Stage 2: Serve using Nginx ---------
