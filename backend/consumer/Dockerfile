@@ -10,11 +10,11 @@ RUN pip install pymongo
 
 # Copy the python script AND the crontab file
 COPY image_consumer.py .
-COPY crontab /etc/cron.d/crontab
+COPY crontab crontab
 
-# Give execution rights and apply cron job
-RUN chmod 0644 /etc/cron.d/crontab
-RUN crontab /etc/cron.d/crontab
+# Apply cron job
+RUN echo "" >> crontab && crontab crontab
 
-# Run the cron daemon in the foreground
-CMD ["cron", "-f"]
+# Start cron in the foreground. 
+# We use a shell wrapper to ensure MONGO_URI is available to the crontab at runtime.
+CMD printenv | grep -v "no_proxy" >> /etc/environment && cron -f

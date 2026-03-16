@@ -126,4 +126,8 @@ export class UsersService {
       throw err;
     }
   }
+
+  async countAll(): Promise<number> {
+    return await this.user.countDocuments();
+  }
 }
