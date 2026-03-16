@@ -12,6 +12,7 @@ import UploadPost from './components/UploadPost';
 import Profile from './components/Profile';
 import Shop from './components/Shop';
 import Gallery from './components/Gallery';
+import StatsBar from './components/StatsBar';
 import { useEffect } from 'react';
 import refresh_token from './middlewares/refresh';
 import getUserInfo from './middlewares/getUserInfo';
@@ -86,6 +87,7 @@ function App() {
       <MantineProvider theme={{ colorScheme: theme }}>
         <div className="flex flex-col min-h-screen">
           <Navbar />
+          <StatsBar />
           <main className="flex-1 w-full bg-slate-50 dark:bg-slate-900 border-x border-slate-200 dark:border-slate-800 xl:w-[1240px] xl:mx-auto">
             <Routes>
               <Route path='/' element={<Home />}></Route>

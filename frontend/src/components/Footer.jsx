@@ -5,7 +5,7 @@ function Footer() {
                 <p>
                     &copy; {new Date().getFullYear()} Graffiti. All rights reserved.
                 </p>
-                <p className="mt-2 md:mt-0">
+                <p className="mt-2 md:mt-0 flex items-center gap-2">
                     Built by{' '}
                     <a
                         href="https://github.com/ayushbasak"
@@ -15,6 +15,7 @@ function Footer() {
                     >
                         @ayushbasak
                     </a>
+                    <span className="text-xs text-slate-500 dark:text-slate-400"> & co-authored by Gemini</span>
                 </p>
             </div>
         </footer>

@@ -10,6 +10,7 @@ import { Label } from '@/components/ui/label';
 
 import getUserInfo from '../middlewares/getUserInfo';
 import { userStore } from '../store/store';
+import { API_BASE_URL } from '../api';
 
 function Login() {
     const navigate = useNavigate();
@@ -47,7 +48,7 @@ function Login() {
 
         setIsLoading(true);
         try {
-            const response = await axios.post('http://localhost:5000/auth/login', {
+            const response = await axios.post(`${API_BASE_URL}/auth/login`, {
                 username: username,
                 password: password,
             });

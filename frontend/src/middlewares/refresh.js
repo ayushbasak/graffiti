@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { API_BASE_URL } from '../api';
 
 function refresh_token() {
     return new Promise((resolve, reject) => {
@@ -11,7 +12,7 @@ function refresh_token() {
             return;
         }
 
-        axios.get('http://localhost:5000/auth/refresh', {
+        axios.get(`${API_BASE_URL}/auth/refresh`, {
             headers: {
                 'Authorization': `Bearer ${token}`
             }

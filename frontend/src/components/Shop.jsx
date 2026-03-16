@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from 'sonner';
 import { Coins, Loader2, ArrowRight } from 'lucide-react';
+import { API_BASE_URL } from '../api';
 
 const PACKAGES = [
     { id: 1, gc: 500, price: 1, color: 'bg-blue-500' },
@@ -19,7 +20,7 @@ function Shop() {
     const initiatePayment = async (pkg) => {
         setIsLoading(pkg.id);
         try {
-            const response = await axios.post('http://localhost:5000/payments/initiate', {
+            const response = await axios.post(`${API_BASE_URL}/payments/initiate`, {
                 amount: pkg.price,
                 gcAmount: pkg.gc
             }, {

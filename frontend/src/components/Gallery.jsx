@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Loader2, Image as ImageIcon, User, Calendar } from "lucide-react";
 import { Link } from 'react-router-dom';
+import { API_BASE_URL } from '../api';
 
 function Gallery() {
     const [posts, setPosts] = useState([]);
@@ -14,7 +15,7 @@ function Gallery() {
         async function fetchPosts() {
             setIsLoading(true);
             try {
-                const response = await axios.get(`http://localhost:5000/posts?page=${page}&limit=12`);
+                const response = await axios.get(`${API_BASE_URL}/posts?page=${page}&limit=12`);
                 setPosts(response.data.posts);
                 setTotalPages(response.data.last_page);
             } catch (error) {
@@ -92,7 +93,7 @@ function Gallery() {
                                             className="flex items-center gap-2 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                                         >
                                             <User className="h-4 w-4 text-slate-400" />
-                                            <span className="text-sm font-bold uppercase tracking-tight">{post.author_name}</span>
+                                            <span className="text-sm font-bold lowercase tracking-tight">{post.author_name}</span>
                                         </Link>
                                         <div className="flex items-center gap-1.5 text-xs text-slate-400">
                                             <Calendar className="h-3 w-3" />

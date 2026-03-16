@@ -8,6 +8,7 @@ import { userStore } from '../store/store';
 import refresh_token from '../middlewares/refresh';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
+import { API_BASE_URL } from '../api';
 
 function Display() {
   const [displayData, setDisplayData] = useState({});
@@ -21,7 +22,7 @@ function Display() {
   const fetchDisplayImage = useCallback(async () => {
     setIsLoading(true);
     try {
-      const response = await axios.get('http://localhost:5000/display');
+      const response = await axios.get(`${API_BASE_URL}/display`);
 
       if (!response.data) {
         setDisplayData({
@@ -59,7 +60,7 @@ function Display() {
   async function bumpPost() {
     setIsBumping(true);
     try {
-      const response = await axios.post('http://localhost:5000/display/bump', null, {
+      const response = await axios.post(`${API_BASE_URL}/display/bump`, null, {
         headers: {
           'Authorization': `Bearer ${access_token}`
         }
@@ -91,7 +92,7 @@ function Display() {
   async function reportPost() {
     setIsReporting(true);
     try {
-      const response = await axios.post('http://localhost:5000/display/report', null, {
+      const response = await axios.post(`${API_BASE_URL}/display/report`, null, {
         headers: {
           'Authorization': `Bearer ${access_token}`
         }

@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { LogOut, User, Menu, X, Coins } from "lucide-react";
 import axios from "axios";
 import { FaMoon, FaSun } from 'react-icons/fa';
+import { API_BASE_URL } from "../api";
 
 function Navbar() {
     const navigate = useNavigate();
@@ -12,7 +13,7 @@ function Navbar() {
 
     async function Logout() {
         try {
-            await axios.get('http://localhost:5000/auth/logout', {
+            await axios.get(`${API_BASE_URL}/auth/logout`, {
                 headers: {
                     'Authorization': `Bearer ${user.access_token}`
                 }

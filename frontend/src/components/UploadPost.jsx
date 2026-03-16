@@ -8,6 +8,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
+import { Modal } from "@mantine/core";
+import Cropper from 'react-easy-crop';
+import { getCroppedImg } from '../utils/cropImage';
+import { API_BASE_URL } from "../api";
 
 import { userStore } from "../store/store";
 
@@ -18,14 +22,49 @@ function UploadPost() {
     const [description, setDescription] = useState("");
     const [duration, setDuration] = useState(1);
     const access_token = userStore(state => state.user.access_token);
+    const [previewUrl, setPreviewUrl] = useState(null);
+    const [originalImage, setOriginalImage] = useState(null);
+    const [showCropModal, setShowCropModal] = useState(false);
+    const [crop, setCrop] = useState({ x: 0, y: 0 });
+    const [zoom, setZoom] = useState(1);
+    const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
 
     const handleFileChange = (e) => {
-        if (e.target.files && e.target.files.length > 0) {
-            setFile(e.target.files[0]);
-            setFileName(e.target.files[0].name);
-        } else {
+        const selectedFile = e.target.files[0];
+        if (!selectedFile) {
             setFile(null);
             setFileName("");
+            setPreviewUrl(null);
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = () => {
+            setOriginalImage(reader.result);
+            setShowCropModal(true);
+        };
+        reader.readAsDataURL(selectedFile);
+    };
+
+    const onCropComplete = (croppedArea, croppedAreaPixels) => {
+        setCroppedAreaPixels(croppedAreaPixels);
+    };
+
+    const handleCropSave = async () => {
+        try {
+            const croppedImageBlob = await getCroppedImg(originalImage, croppedAreaPixels);
+            const croppedFile = new File([croppedImageBlob], fileName || "cropped-art.jpg", {
+                type: "image/jpeg",
+            });
+
+            setFile(croppedFile);
+            setFileName(croppedFile.name);
+            setPreviewUrl(URL.createObjectURL(croppedImageBlob));
+            setShowCropModal(false);
+            toast.success("Art cropped successfully!");
+        } catch (e) {
+            console.error(e);
+            toast.error("Failed to crop image");
         }
     };
 
@@ -47,7 +86,7 @@ function UploadPost() {
 
         try {
             // STEP 1: Ask Node.js backend for an AWS Presigned URL
-            const urlResponse = await axios.post('http://localhost:5000/iq/presigned-url', {
+            const urlResponse = await axios.post(`${API_BASE_URL}/iq/presigned-url`, {
                 fileName: file.name,
                 contentType: file.type
             }, {
@@ -62,7 +101,7 @@ function UploadPost() {
             });
 
             // STEP 3: Now tell the backend to drop this image into the ImageQueue
-            await axios.post('http://localhost:5000/iq', {
+            await axios.post(`${API_BASE_URL}/iq`, {
                 url: publicUrl, // We use the new AWS S3 public URL
                 content: description,
                 duration: Number(duration)
@@ -77,6 +116,7 @@ function UploadPost() {
             // Reset form
             setFile(null);
             setFileName("");
+            setPreviewUrl(null);
             setDescription("");
             setDuration(1);
 
@@ -94,6 +134,48 @@ function UploadPost() {
 
     return (
         <div className="flex flex-col items-center justify-center w-full min-h-[calc(100vh-140px)] px-4 py-8">
+            <Modal
+                opened={showCropModal}
+                onClose={() => setShowCropModal(false)}
+                title="Crop your art (1:1 Ratio)"
+                size="lg"
+                centered
+                overlayProps={{
+                    backgroundOpacity: 0.55,
+                    blur: 3,
+                }}
+            >
+                <div className="relative w-full h-80 bg-slate-900 rounded-lg overflow-hidden">
+                    <Cropper
+                        image={originalImage}
+                        crop={crop}
+                        zoom={zoom}
+                        aspect={1 / 1}
+                        onCropChange={setCrop}
+                        onCropComplete={onCropComplete}
+                        onZoomChange={setZoom}
+                    />
+                </div>
+                <div className="mt-6 flex flex-col gap-4">
+                    <div className="space-y-2">
+                        <Label className="text-xs uppercase font-bold text-slate-500">Zoom</Label>
+                        <input
+                            type="range"
+                            value={zoom}
+                            min={1}
+                            max={3}
+                            step={0.1}
+                            aria-labelledby="Zoom"
+                            onChange={(e) => setZoom(e.target.value)}
+                            className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-black"
+                        />
+                    </div>
+                    <Button onClick={handleCropSave} className="w-full font-bold">
+                        Save Crop
+                    </Button>
+                </div>
+            </Modal>
+
             <Card className="w-full max-w-md shadow-lg border-slate-200 dark:border-slate-800">
                 <CardHeader className="space-y-1 text-center mb-4">
                     <CardTitle className="text-3xl font-bold tracking-tight">Upload Art</CardTitle>
@@ -103,6 +185,16 @@ function UploadPost() {
                 </CardHeader>
                 <form onSubmit={handleUploadFlow}>
                     <CardContent className="space-y-6">
+
+                        {/* Image Preview Area */}
+                        {previewUrl && (
+                            <div className="flex flex-col items-center gap-3">
+                                <Label className="text-sm font-medium text-slate-500 uppercase tracking-wider">Preview (1:1 Ratio)</Label>
+                                <div className="w-48 h-48 rounded-xl overflow-hidden border-4 border-white shadow-xl bg-slate-100">
+                                    <img src={previewUrl} className="w-full h-full object-cover" alt="Preview" />
+                                </div>
+                            </div>
+                        )}
 
                         {/* File Upload Area */}
                         <div className="space-y-3">
