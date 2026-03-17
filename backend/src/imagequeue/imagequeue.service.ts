@@ -1,10 +1,12 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable, BadRequestException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { UsersService } from 'src/users/users.service';
 import { AddImageDTO } from './dto';
 import { ImageQueue } from './imagequeue.iterface';
 import { PostsService } from '../posts/posts.service';
+import { S3Service } from './s3.service';
+import { ModerationService } from './moderation.service';
 
 @Injectable()
 export class ImageQueueService {
@@ -12,6 +14,8 @@ export class ImageQueueService {
     @InjectModel('imagequeue') private iq: Model<ImageQueue>,
     private userService: UsersService,
     private postsService: PostsService,
+    private s3Service: S3Service,
+    private moderationService: ModerationService,
   ) { }
 
   async add_to_queue(dto: AddImageDTO) {
@@ -26,10 +30,21 @@ export class ImageQueueService {
       if (user.access_level < 0) {
         throw new ForbiddenException('Banned');
       }
+
       const queue_size = await this.iq.countDocuments();
       const cost = queue_size * 10;
+
       const updateGC = await this.userService.postAndUpdateGC(dto.author, cost);
       if (updateGC) {
+        // AI FIREWALL: Check for NSFW / Illegal content
+        const isValid = await this.moderationService.validateImage(dto.url);
+
+        if (!isValid) {
+          // Cleanup S3
+          await this.s3Service.deleteFile(dto.url);
+          throw new BadRequestException('Content violates community guidelines. Graffiti Coins subtracted as penalty.');
+        }
+
         const image = new this.iq(dto);
         await image.save();
         // Permanently record in gallery

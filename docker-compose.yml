@@ -19,6 +19,7 @@ services:
       - AWS_S3_BUCKET_NAME=${AWS_S3_BUCKET_NAME}
       - PAYU_KEY=${PAYU_KEY}
       - PAYU_SALT=${PAYU_SALT}
+      - GROK_API_KEY=${GROK_API_KEY}
     deploy:
       resources:
         limits:

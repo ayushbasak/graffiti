@@ -6,7 +6,7 @@ WORKDIR /usr/src/app
 # Only copy package files to maximize Docker caching
 COPY package.json package-lock.json ./
 
-RUN npm install
+RUN npm install --legacy-peer-deps
 
 # Copy the rest of the frontend source
 COPY . .

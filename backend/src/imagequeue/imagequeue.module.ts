@@ -6,6 +6,7 @@ import { ImageQueueController } from './imagequeue.controller';
 import { ImageQueueSchema } from './imagequeue.schema';
 import { ImageQueueService } from './imagequeue.service';
 import { S3Service } from './s3.service';
+import { ModerationService } from './moderation.service';
 import { PostsModule } from '../posts/posts.module';
 
 @Module({
@@ -18,6 +19,6 @@ import { PostsModule } from '../posts/posts.module';
     PostsModule,
   ],
   controllers: [ImageQueueController],
-  providers: [ImageQueueService, S3Service],
+  providers: [ImageQueueService, S3Service, ModerationService],
 })
 export class ImageQueueModule { }
